@@ -5,8 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.qsp.movie_reservation_system.dao.OwnerDao;
+import com.qsp.movie_reservation_system.dao.TheatreDao;
 import com.qsp.movie_reservation_system.dto.Owner;
+import com.qsp.movie_reservation_system.dto.Theatre;
 import com.qsp.movie_reservation_system.exceptions.OwnerIdNotFound;
+import com.qsp.movie_reservation_system.exceptions.TheatreIdNotFound;
 import com.qsp.movie_reservation_system.util.ResponseStructure;
 import com.qsp.movie_reservation_system.util.ResponseStructure1;
 
@@ -18,6 +21,9 @@ public class OwnerService {
 	
 	@Autowired
 	ResponseStructure<Owner> responseStructure;
+	
+	@Autowired
+	TheatreDao theatreDao;
 	
 	@Autowired
 	ResponseStructure1<Owner> responseStructure1;
@@ -42,18 +48,30 @@ public class OwnerService {
 
 	}
 	public ResponseStructure<Owner> addExistingTheatreToExistingOwner(int theatreId, int ownerId) {
+		Owner owner =ownerDao.fetchOwnerById(ownerId);
+		Theatre theatre=theatreDao.fetchTheatreById(theatreId);
+		if(owner != null && theatre != null) {
 		responseStructure.setStatusCode(HttpStatus.OK.value());
 		responseStructure.setMessage("Successfully added existing theatre to Owner");
 		responseStructure.setData(ownerDao.addExistingTheatreToExistingOwner(theatreId, ownerId));
 
 		return responseStructure;
+		}
+		else {
+			if(theatre == null) throw new TheatreIdNotFound();
+			else throw new OwnerIdNotFound();
+		}
 	}
 	public ResponseStructure<Owner> updateOwnerById(int oldOwnerId,Owner newOwner) {
+		Owner owner=ownerDao.fetchOwnerById(oldOwnerId);
+		if(owner!=null) {
 		responseStructure.setStatusCode(HttpStatus.OK.value());
 		responseStructure.setMessage("Successfully Owner updated into Database");
 		responseStructure.setData(ownerDao.updateOwnerById(oldOwnerId, newOwner));
 
 		return responseStructure;
+		}
+		throw new OwnerIdNotFound();
 	}
 	
 	public ResponseStructure1<Owner> fetchAllOwner(){

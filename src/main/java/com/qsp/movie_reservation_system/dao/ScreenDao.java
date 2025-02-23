@@ -52,9 +52,9 @@ public class ScreenDao {
 
 	}
 
-	public Screen addExistingMovieToExistingScreen(int movieId, int screenid) {
+	public Screen addExistingMovieToExistingScreen(int movieId, int screenId) {
 		Movie movie = movieDao.fetchMovieById(movieId);
-		Screen screen = fetchScreenById(screenid);
+		Screen screen = fetchScreenById(screenId);
 		screen.setMovie(movie);
 		return saveScreen(screen);
 	}

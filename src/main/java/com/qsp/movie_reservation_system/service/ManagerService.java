@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.qsp.movie_reservation_system.dao.ManagerDao;
 import com.qsp.movie_reservation_system.dto.Manager;
+import com.qsp.movie_reservation_system.exceptions.ManagerIdNotFound;
 import com.qsp.movie_reservation_system.util.ResponseStructure;
 import com.qsp.movie_reservation_system.util.ResponseStructure1;
 
@@ -33,17 +34,24 @@ public class ManagerService {
 	}
 
 	public ResponseStructure<Manager> fetchManagerById(int managerId) {
+		Manager manager=managerDao.fetchManagerById(managerId);
+		if(manager != null) {
 		responseStructure.setStatusCode(HttpStatus.FOUND.value());
 		responseStructure.setMessage("Successfully Manager fetched from Database");
 		responseStructure.setData(managerDao.fetchManagerById(managerId) );
 		return responseStructure ;
-
+		}
+        throw new ManagerIdNotFound();
 	}
 	public ResponseStructure<Manager> updateManagerById(int oldManagerId,Manager newManager) {
+		Manager manager=managerDao.fetchManagerById(oldManagerId);
+		if(manager != null) {
 		responseStructure.setStatusCode(HttpStatus.OK.value());
 		responseStructure.setMessage("Successfully Manager Updated into Database");
 		responseStructure.setData(managerDao.updateManagerById(oldManagerId, newManager));
 		return responseStructure ;
+	}
+    throw new ManagerIdNotFound();
 	}
 	
 	public ResponseStructure1<Manager> fetchAllManager(){
@@ -56,10 +64,15 @@ public class ManagerService {
 	}
 
 	public ResponseStructure<Manager> deleteManagerById(int managerId){
+		Manager manager=managerDao.fetchManagerById(managerId);
+		if(manager != null) {
 		responseStructure.setStatusCode(HttpStatus.OK.value());
 		responseStructure.setMessage("Successfully Manager deleted from Database");
 		responseStructure.setData(managerDao.deleteManagerById(managerId));
 		return responseStructure ;
+		}
+		throw new ManagerIdNotFound();
+		
 		
 	}
 

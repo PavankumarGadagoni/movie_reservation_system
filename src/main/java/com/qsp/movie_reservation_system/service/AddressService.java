@@ -32,15 +32,15 @@ public class AddressService {
 	}
 
 	public ResponseStructure<Address> fetchAddressById(int addressId) {
-		Address address=addressDao.fetchAddressById(addressId);
-		if(address != null) {
+		Address address=addressDao.fetchAddressById(addressId); // Fetching the address from database based on Id
+  		if(address != null) { // --> checking whether the data is null or it present.
 		responseStructure.setStatusCode(HttpStatus.FOUND.value());
 		responseStructure.setMessage("Successfully Address Fetched from Database");
 		responseStructure.setData(addressDao.fetchAddressById(addressId));
 
 		return responseStructure;
 		}
-		throw new AddressIdNotFound();
+		throw new AddressIdNotFound(); // if no  data is matching throwing the exception 
 	}
 	public ResponseStructure<Address> updateAddressById(int oldAddressId,Address newAddress) {
 		Address address=addressDao.fetchAddressById(oldAddressId);

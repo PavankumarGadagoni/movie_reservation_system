@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.qsp.movie_reservation_system.dao.ReviewDao;
 import com.qsp.movie_reservation_system.dto.Review;
+import com.qsp.movie_reservation_system.exceptions.ReviewIdNotFound;
 import com.qsp.movie_reservation_system.util.ResponseStructure;
 import com.qsp.movie_reservation_system.util.ResponseStructure1;
 
@@ -29,18 +30,25 @@ public class ReviewService {
 	}
 
 	public ResponseStructure<Review> fetchReviewById(int reviewId) {
-
+         Review review=reviewDao.fetchReviewById(reviewId);
+         if(review != null) {
 		responseStructure.setStatusCode(HttpStatus.FOUND.value());
 		responseStructure.setMessage("Successfully Review Fetched from Database");
 		responseStructure.setData(reviewDao.fetchReviewById(reviewId));
 		return responseStructure;
+         }
+         throw new ReviewIdNotFound();
 
 	}
 	public ResponseStructure<Review> updateReviewById(int oldReviewId,Review newReview) {
+		  Review review=reviewDao.fetchReviewById(oldReviewId);
+	         if(review != null) {
 		responseStructure.setStatusCode(HttpStatus.OK.value());
 		responseStructure.setMessage("Successfully Review Updated into Database");
 		responseStructure.setData(reviewDao.updateReviewById(oldReviewId, newReview));
 		return responseStructure;
+	         }
+	         throw new ReviewIdNotFound();
 	}
 	
 	public ResponseStructure1<Review> fetchAllReview(){
@@ -52,10 +60,14 @@ public class ReviewService {
 	}
 
 	public ResponseStructure<Review> deleteReviewById(int reviewId){
+		  Review review=reviewDao.fetchReviewById(reviewId);
+	         if(review != null) {
 		responseStructure.setStatusCode(HttpStatus.OK.value());
 		responseStructure.setMessage("Successfully Review deleted in Database");
 		responseStructure.setData(reviewDao.deleteReviewById(reviewId));
 		return responseStructure;
+	         }
+	         throw new ReviewIdNotFound();
 		
 	}
 	

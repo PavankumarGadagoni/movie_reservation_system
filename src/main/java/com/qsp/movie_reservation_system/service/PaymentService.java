@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.qsp.movie_reservation_system.dao.PaymentDao;
 
 import com.qsp.movie_reservation_system.dto.Payment;
+import com.qsp.movie_reservation_system.exceptions.PaymentIdNotFound;
 import com.qsp.movie_reservation_system.util.ResponseStructure;
 import com.qsp.movie_reservation_system.util.ResponseStructure1;
 
@@ -33,17 +34,25 @@ public class PaymentService {
 
 	public ResponseStructure<Payment> fetchPaymentById(int paymentId) {
 
+		Payment payment=paymentDao.fetchPaymentById(paymentId);
+		if(payment != null) {
 		responseStructure.setStatusCode(HttpStatus.FOUND.value());
 		responseStructure.setMessage("Successfully payment Fetched from Database");
 		responseStructure.setData(paymentDao.fetchPaymentById(paymentId));
 		return responseStructure;
+		}
+		throw new PaymentIdNotFound();
 
 	}
 	public ResponseStructure<Payment> updatePaymentById(int oldPaymentId,Payment newPayment) {
+		Payment payment=paymentDao.fetchPaymentById(oldPaymentId);
+		if(payment != null) {
 		responseStructure.setStatusCode(HttpStatus.OK.value());
 		responseStructure.setMessage("Successfully payment Updated into Database");
 		responseStructure.setData(paymentDao.updatePaymentById(oldPaymentId, newPayment));
 		return responseStructure;
+		}
+		throw new PaymentIdNotFound();
 	}
 	
 	public ResponseStructure1<Payment> fetchAllPayment(){
@@ -52,13 +61,18 @@ public class PaymentService {
 		responseStructure1.setData(paymentDao.fetchAllPayment());
 
 		return responseStructure1;
+	
 	}
 
 	public ResponseStructure<Payment> deletePaymentById(int paymentId){
+		Payment payment=paymentDao.fetchPaymentById(paymentId);
+		if(payment != null) {
 		responseStructure.setStatusCode(HttpStatus.OK.value());
 		responseStructure.setMessage("Successfully payment deleted in Database");
 		responseStructure.setData(paymentDao.deletePaymentById(paymentId));
 		return responseStructure;
+		}
+		throw new PaymentIdNotFound();
 		
 	}
 }
